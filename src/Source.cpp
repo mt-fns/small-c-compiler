@@ -10,7 +10,7 @@
 Source::Source(const std::string& filename) {
     std::ifstream in(filename, std::ios::binary);
     if (!in) {
-        std::cout << colour::red() << "[# vc #]: can't read: " << colour::reset() << filename << '\n';
+        std::cout << colour::error() << "[# vc #]: can't read: " << colour::reset() << filename << '\n';
         std::exit(1);
     }
 

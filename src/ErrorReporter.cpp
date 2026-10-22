@@ -7,7 +7,7 @@
 ErrorReporter::ErrorReporter() : numErrors{0} {}
 
 void ErrorReporter::reportError(const std::string& message, const std::string& tokenName, const Position& pos) {
-    std::cout << colour::red() << "ERROR: " << colour::reset() << pos << ": ";
+    std::cout << colour::error() << "ERROR: " << colour::reset() << pos << ": ";
 
     if (message.find('%') == std::string::npos) {
         std::cout << message;
@@ -29,7 +29,7 @@ void ErrorReporter::reportError(const std::string& message, const std::string& t
 }
 
 void ErrorReporter::reportRestriction(const std::string& message) {
-    std::cout << colour::yellow() << "RESTRICTION: " << colour::reset() << message << '\n';
+    std::cout << colour::warning() << "RESTRICTION: " << colour::reset() << message << '\n';
 }
 
 int ErrorReporter::getNumErrors() const {

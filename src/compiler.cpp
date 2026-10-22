@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
     std::cout << colour::bold() << "Minimal C compiler" << colour::reset() << "\n\n";
 
     if (argc < 2) {
-        std::cout << colour::red() << "[Error]: " << colour::reset() << "no input file\n";
+        std::cout << colour::error() << "[Error]: " << colour::reset() << "no input file\n";
         cmdLineOptions();
     }
     std::string inputFilename = argv[1];
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
     Source source(inputFilename);
     ErrorReporter reporter;
 
-    std::cout << colour::green() << "[Running Scanner]" << colour::reset() << '\n';
+    std::cout << colour::note() << "[Running Scanner]" << colour::reset() << '\n';
     Scanner scanner(source, reporter);
 
     scanner.enableDebugging();
