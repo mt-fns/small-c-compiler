@@ -1,4 +1,7 @@
 #include "Scanner.h"
+#include "Colour.h"
+#include "Position.h"
+#include "Token.h"
 
 #include <cctype>
 #include <iostream>
@@ -224,6 +227,12 @@ void Scanner::skipSpaceAndComments() {
                 charStart = 0;
                 charFinish = 0;
                 accept();
+            } else if (currentChar == '\t') {
+                accept();
+                // move to next multiple of 8
+                int nextTab = (charFinish-1)/8+1;
+                charFinish = (nextTab*8)+1;
+                charStart = charFinish;
             } else {
                 accept();
             }
@@ -236,6 +245,27 @@ void Scanner::skipSpaceAndComments() {
 }
 
 Token Scanner::getToken() {
-    // TODO
-    return Token(Token::END_OF_FILE, std::string(Token::spell(Token::END_OF_FILE)), Position());
+    int kind;
+
+    skipSpaceAndComments();
+
+    charStart = charFinish;
+    currentSpelling.clear();
+
+    kind = nextToken();
+
+    if (kind == Token::END_OF_FILE) {
+        sourcePos = Position{lineStart, lineFinish, 1, 1};
+    } else {
+        sourcePos = Position{lineStart, lineFinish, charStart, charFinish - 1};
+    }
+
+    Token token = Token{kind, currentSpelling, sourcePos};
+
+    if (debug) {
+        std::cout << colour::forToken(token.kind) << token << colour::reset() << '\n';
+    }
+
+    charStart = charFinish;
+    return token;
 }

@@ -7,7 +7,9 @@ set(CMAKE_CXX_EXTENSIONS OFF)          # -std=c++20, not gnu++20
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)  # for clangd
 
 add_executable(compiler
-    src/main.cpp
+    src/Colour.cpp
+    src/compiler.cpp
+    src/ErrorReporter.cpp
     src/Position.cpp
     src/Scanner.cpp
     src/Source.cpp
