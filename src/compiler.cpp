@@ -14,7 +14,7 @@ static void cmdLineOptions() {
 }
 
 int main(int argc, char* argv[]) {
-    std::cout << colour::bold() << "Minimal C compiler" << colour::reset() << "\n\n";
+    std::cout << colour::bold() << "Small C Compiler" << colour::reset() << "\n\n";
 
     if (argc < 2) {
         std::cout << colour::error() << "[Error]: " << colour::reset() << "no input file\n";

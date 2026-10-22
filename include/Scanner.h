@@ -31,9 +31,7 @@ class Scanner final {
         void accept();
 
         int handleFLoat();
-
-        char inspectChar(int nthChar);
-
+        
         int handleString();
 
         int nextToken();

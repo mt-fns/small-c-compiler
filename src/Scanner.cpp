@@ -30,10 +30,6 @@ int Scanner::handleFLoat() {
     return Token::FLOATLITERAL;
 }
 
-char Scanner::inspectChar(int nthChar) {
-    return sourceFile.inspectChar(nthChar);
-}
-
 int Scanner::handleString() {
     // TODO
     return Token::STRINGLITERAL;

@@ -11,5 +11,10 @@ Position::Position(int lineStart, int lineFinish, int charStart, int charFinish)
     charFinish{charFinish} {}
 
 std::ostream& operator<<(std::ostream& os, const Position& p) {
-    return os << p.lineStart << "(" << p.charStart << ").." << p.lineFinish << "(" << p.charFinish << ")";
+    os << "line: " << p.lineStart;
+    // phrases from the parser can span several lines
+    if (p.lineFinish != p.lineStart) {
+        os << ".." << p.lineFinish;
+    }
+    return os << ", column: " << p.charStart << ".." << p.charFinish;
 }

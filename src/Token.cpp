@@ -61,8 +61,8 @@ std::string_view Token::spell(int token_kind) {
 
 std::string Token::toString() const {
     std::ostringstream out;
-    out << "Kind = " << kind << " [" << spell(kind) << "], spelling = \""
-        << spelling << "\", position = " << position;
+    out << "type = " << spell(kind) << ", token = \""
+        << spelling << "\", position = [" << position << "]";
     return out.str();
 }
 
