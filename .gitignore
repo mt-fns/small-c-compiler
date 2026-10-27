@@ -1,0 +1,14 @@
+# Build output (CMake, clangd index)
+build/
+cmake-build-*/
+compile_commands.json
+
+# clangd
+.cache/
+
+# Compiled objects and binaries
+*.o
+*.obj
+*.a
+*.so
+*.out
