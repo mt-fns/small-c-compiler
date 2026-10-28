@@ -6,7 +6,7 @@
 namespace colour {
     // semantic roles
     const char* keyword();  // while, return
-    const char* type();     // int, float, boolean, void
+    const char* type();     // int, float, void
     const char* value();    // identifiers
     const char* number();   // numeric literals
     const char* string();   // string literals

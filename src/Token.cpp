@@ -3,7 +3,6 @@
 #include <sstream>
 
 const std::string_view Token::keywords[] = {
-    "boolean",
     "break",
     "continue",
     "else",
@@ -39,7 +38,6 @@ const std::string_view Token::keywords[] = {
     "<id>",
     "<int-literal>",
     "<float-literal>",
-    "<boolean-literal>",
     "<string-literal>",
     "<error>",
     "$"

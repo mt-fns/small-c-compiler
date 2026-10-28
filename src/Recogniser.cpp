@@ -48,9 +48,6 @@ void Recogniser::parseType() {
         case Token::VOID:
             match(Token::VOID);
             break;
-        case Token::BOOLEAN:
-            match(Token::BOOLEAN);
-            break;
         case Token::INT:
             match(Token::INT);
             break;

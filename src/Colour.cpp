@@ -58,7 +58,6 @@ namespace colour {
     const char* forToken(int kind) {
         switch (kind) {
             // type keywords
-            case Token::BOOLEAN:
             case Token::FLOAT:
             case Token::INT:
             case Token::VOID:
@@ -66,7 +65,7 @@ namespace colour {
         }
 
         // other keywords
-        if (kind >= Token::BOOLEAN && kind <= Token::WHILE) {
+        if (kind >= Token::BREAK && kind <= Token::WHILE) {
             return keyword();
         }
         // operators and separators
@@ -78,7 +77,6 @@ namespace colour {
             case Token::ID:             return value();
             case Token::INTLITERAL:     return number();
             case Token::FLOATLITERAL:   return number();
-            case Token::BOOLEANLITERAL: return number();
             case Token::STRINGLITERAL:  return string();
             case Token::ERROR:          return error();
             case Token::END_OF_FILE:    return comment();

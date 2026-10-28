@@ -30,6 +30,9 @@ class Scanner final {
 
         void accept();
 
+        // consume a char that isn't part of a token keeping line and column up to date
+        void skipChar();
+
         int handleFLoat();
         
         int handleString();

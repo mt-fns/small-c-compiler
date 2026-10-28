@@ -1,5 +1,6 @@
 #include "Scanner.h"
 #include "Colour.h"
+#include "ErrorReporter.h"
 #include "Position.h"
 #include "Token.h"
 
@@ -25,13 +26,98 @@ void Scanner::accept() {
     charFinish++;
 }
 
+void Scanner::skipChar() {
+    if (currentChar == '\n') {
+        lineStart++;
+        lineFinish++;
+        charFinish = 0;
+        accept();
+    } else if (currentChar == '\t') {
+        // move to the column after the next multiple of 8
+        int tabCol = charFinish;
+        accept();
+        charFinish = ((tabCol - 1) / 8 + 1) * 8 + 1;
+    } else {
+        accept();
+    }
+}
+
 int Scanner::handleFLoat() {
-    // TODO
+    // float-const ::= [ int-const ] '.' int-const
+    if (!std::isdigit(static_cast<unsigned char>(sourceFile.inspectChar(1)))) {
+        if (!currentSpelling.empty()) {
+            return Token::INTLITERAL;
+        }
+        currentSpelling += currentChar;
+        accept();
+        return Token::ERROR;
+    }
+
+    currentSpelling += currentChar;
+    accept();
+    while (std::isdigit(static_cast<unsigned char>(currentChar))) {
+        currentSpelling += currentChar;
+        accept();
+    }
     return Token::FLOATLITERAL;
 }
 
 int Scanner::handleString() {
-    // TODO
+    // the quotes aren't part of the spelling, and escapes are stored as the char they stand for
+    Position start{lineStart, lineFinish, charStart, charStart};
+    accept();
+
+    while (currentChar != '"') {
+        if (currentChar == '\n' || currentChar == Source::eof) {
+            errorReporter.reportError("%: unterminated string", currentSpelling, start);
+            return Token::STRINGLITERAL;
+        }
+
+        if (currentChar != '\\') {
+            currentSpelling += currentChar;
+            accept();
+            continue;
+        }
+
+        char escaped;
+        switch (sourceFile.inspectChar(1)) {
+            case 'n':  escaped = '\n'; break;
+            case 'a':  escaped = '\a'; break;
+            case 'b':  escaped = '\b'; break;
+            case 't':  escaped = '\t'; break;
+            case 'f':  escaped = '\f'; break;
+            case 'r':  escaped = '\r'; break;
+            case 'v':  escaped = '\v'; break;
+            case '\\': escaped = '\\'; break;
+            case '\'': escaped = '\''; break;
+            case '"':  escaped = '"';  break;
+            case '?':  escaped = '?';  break;
+            case '0':  escaped = '\0'; break;
+
+            case '\n':
+            case Source::eof:
+                // leave the newline/eof for the unterminated check
+                currentSpelling += currentChar;
+                accept();
+                continue;
+
+            default: {
+                std::string illegal{currentChar, sourceFile.inspectChar(1)};
+                Position escapePos{lineStart, lineFinish, charFinish, charFinish + 1};
+                errorReporter.reportError("%: illegal escape character", illegal, escapePos);
+                currentSpelling += illegal;
+                accept();
+                accept();
+                continue;
+            }
+        }
+
+        currentSpelling += escaped;
+        accept();
+        accept();
+    }
+
+    accept();
     return Token::STRINGLITERAL;
 }
 
@@ -43,7 +129,6 @@ int Scanner::nextToken() {
             return Token::LPAREN;
 
         case '"':
-            // TODO
             return handleString();
 
         case ')':
@@ -82,7 +167,6 @@ int Scanner::nextToken() {
             return Token::COMMA;
 
         case '.':
-            // TODO: consume float
             return handleFLoat();
 
         case '+':
@@ -187,7 +271,7 @@ int Scanner::nextToken() {
         }
 
         // there is a non numeric char, try float instead
-        if (currentChar == '.' || currentChar == 'e' || currentChar == 'E') {
+        if (currentChar == '.') {
             return handleFLoat();
         }
         return Token::INTLITERAL;
@@ -200,10 +284,6 @@ int Scanner::nextToken() {
             accept();
         }
 
-        if (currentSpelling == "true" || currentSpelling == "false") {
-            return Token::BOOLEANLITERAL;
-        }
-
         return Token::ID;
     }
 
@@ -214,29 +294,30 @@ int Scanner::nextToken() {
 
 void Scanner::skipSpaceAndComments() {
     while (true) {
-        // handle whitespace
-        while (currentChar == ' ' || currentChar == '\n' || currentChar == '\t' || currentChar == '\r' || currentChar == '\f') {
-            // TODO: add stuff for handling tabs etc
-            if (currentChar == '\n') {
-                lineStart++;
-                lineFinish++;
-                charStart = 0;
-                charFinish = 0;
-                accept();
-            } else if (currentChar == '\t') {
-                accept();
-                // move to next multiple of 8
-                int nextTab = (charFinish-1)/8+1;
-                charFinish = (nextTab*8)+1;
-                charStart = charFinish;
-            } else {
-                accept();
+        if (currentChar == ' ' || currentChar == '\n' || currentChar == '\t' || currentChar == '\r' || currentChar == '\f') {
+            skipChar();
+        } else if (currentChar == '/' && sourceFile.inspectChar(1) == '/') {
+            // the newline is left for the whitespace case
+            while (currentChar != '\n' && currentChar != Source::eof) {
+                skipChar();
             }
+        } else if (currentChar == '/' && sourceFile.inspectChar(1) == '*') {
+            Position start{lineStart, lineFinish, charFinish, charFinish};
+            skipChar();
+            skipChar();
+
+            while (!(currentChar == '*' && sourceFile.inspectChar(1) == '/')) {
+                if (currentChar == Source::eof) {
+                    errorReporter.reportError("unterminated comment", "", start);
+                    return;
+                }
+                skipChar();
+            }
+            skipChar();
+            skipChar();
+        } else {
+            break;
         }
-
-        // TODO: add stuff for handling comments
-
-        break;
     }
 }
 

@@ -10,8 +10,7 @@ class Token {
     public:
         enum Kind {
             // reserved words
-            BOOLEAN = 0,
-            BREAK,
+            BREAK = 0,
             CONTINUE,
             ELSE,
             FLOAT,
@@ -54,7 +53,6 @@ class Token {
             // literals
             INTLITERAL,
             FLOATLITERAL,
-            BOOLEANLITERAL,
             STRINGLITERAL,
 
             // special tokens
@@ -77,7 +75,7 @@ class Token {
 
         static const std::string_view keywords[];
 
-        static constexpr int firstReservedWord = BOOLEAN;
+        static constexpr int firstReservedWord = BREAK;
         static constexpr int lastReservedWord = WHILE;
 };
 
