@@ -77,3 +77,11 @@ void Recogniser::parseIdentifier() {
 }
 
 
+void Recogniser::parseFunDefinition() {
+    // TODO
+}
+
+void Recogniser::parseDeclStmt() {
+    // TODO
+}
+
