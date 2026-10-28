@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     Scanner scanner2(source, reporter);
     Recogniser recogniser(scanner, reporter);
 
-    recogniser.parseProgram();
+    recogniser.parseTopLevel();
     // TODO: call parseProgram and read from error reporter to check if program copmiled
     // also implement syntax error in parseProgram, comments and strings in scanner, and parseProgram functions
 

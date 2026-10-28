@@ -11,7 +11,7 @@ Recogniser::Recogniser(Scanner& scanner, ErrorReporter& reporter) :
 
 void Recogniser::match(int tokenExpected) {
     if (currentToken.kind == tokenExpected) {
-        currentToken = scanner.getToken();
+        accept();
     } else {
         // TODO: throw a syntax error here once we have the syntax error class
         std::cerr << "EROR IN MATCH" << std::endl;
@@ -19,7 +19,19 @@ void Recogniser::match(int tokenExpected) {
 }
 
 void Recogniser::accept() {
-    currentToken = scanner.getToken();
+    if (lookahead.empty()) {
+        currentToken = scanner.getToken();
+    } else {
+        currentToken = lookahead.front();
+        lookahead.pop_front();
+    }
+}
+
+Token Recogniser::peek(std::size_t n) {
+    while (lookahead.size() < n) {
+        lookahead.push_back(scanner.getToken());
+    }
+    return lookahead[n - 1];
 }
 
 void Recogniser::syntacticError(std::string message, std::string token) {
@@ -29,21 +41,21 @@ void Recogniser::syntacticError(std::string message, std::string token) {
 }
 
 
-// PARSE FUCNCTIONS
-
-void Recogniser::parseProgram() {
-    while (currentToken.kind != Token::END_OF_FILE) {
-        parseType();
-        parseIdent();
-        if (currentToken.kind == Token::LPAREN) {
-            parseFuncDelcRest();
-        } else {
-            parseVarDeclRest();
-        }
+void Recogniser::parseTopLevel() {
+    while (currentToken.kind == Token::VOID || currentToken.kind == Token::INT || currentToken.kind == Token::FLOAT) {
+        parseTopLevelElem();
     }
 }
 
-void Recogniser::parseType() {
+void Recogniser::parseTopLevelElem() {
+    if (peek(2).kind == Token::LPAREN) {
+        parseFunDefinition();
+    } else {
+        parseDeclStmt();
+    }
+}
+
+void Recogniser::parseTyyDecl() {
     switch (currentToken.kind) {
         case Token::VOID:
             match(Token::VOID);
@@ -60,20 +72,8 @@ void Recogniser::parseType() {
 }
 
 
-void Recogniser::parseIdent() {
-    if (currentToken.kind == Token::ID) {
-        accept();
-    } else {
-        syntacticError("Failed Parsing Identifier", currentToken.spelling);
-    }
+void Recogniser::parseIdentifier() {
+    match(Token::ID);
 }
 
-
-void Recogniser::parseFuncDelcRest() {
-
-}
-
-void Recogniser::parseVarDeclRest() {
-
-}
 

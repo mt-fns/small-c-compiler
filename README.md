@@ -1,7 +1,6 @@
 # Small C Compiler
 
-**scc** is a compiler that compiles a subset of C. The C subset that **scc** recognises is defined by this EBNF grammar:
-
+The subset of C that **scc** recognises is defined by the EBNF grammar below:
 
 ```ebnf
 Grammar::Syntactic::SmallC
@@ -149,3 +148,15 @@ escapable       ::= 'n' | 'a' | 'b' | 't' | 'f' | 'r' | 'v' | '\' | "'" | '"' | 
 comment         ::= "//" { any-char } "\n"
                   | "/*" { any-char } "*/"
 ```
+
+### EBNF Notation
+
+- Enclosed within two ?s is a global capture, it does not mean optional. It means 'I am writing a free-style sentence'.
+- Enclosed within { and } means : repeat at least zero times
+- Enclosed within [ and ] means : this is optional
+- Enclosed within ( and ) means : this is a group
+- | means alternation.
+Every left-hand-side denotes a rule name. They are assinged to by ::=.
+
+Taken from: 
+https://gist.github.com/Chubek/52884d1fa766fa16ae8d8f226ba105ad
