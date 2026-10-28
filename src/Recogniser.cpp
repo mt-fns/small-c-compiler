@@ -74,14 +74,37 @@ void Recogniser::parseTyyDecl() {
 
 void Recogniser::parseIdentifier() {
     match(Token::ID);
+    
 }
 
 
 void Recogniser::parseFunDefinition() {
+    
     // TODO
 }
 
 void Recogniser::parseDeclStmt() {
     // TODO
+    parseTyyDecl();
+    parseInitList();
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseInitList() {
+    parseInitDecl();
+
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseInitDecl();
+    }
+}
+
+void Recogniser::parseInitDecl() {
+    // parseDeclarator();
+
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
+        parseInitInitialiser();
+    }
 }
 
