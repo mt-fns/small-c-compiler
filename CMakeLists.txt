@@ -14,6 +14,7 @@ add_executable(compiler
     src/Recogniser.cpp
     src/Scanner.cpp
     src/Source.cpp
+    src/SyntaxError.cpp
     src/Token.cpp
 )
 target_include_directories(compiler PRIVATE include)

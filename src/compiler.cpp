@@ -4,6 +4,7 @@
 
 #include "Colour.h"
 #include "ErrorReporter.h"
+#include "Recogniser.h"
 #include "Scanner.h"
 #include "Source.h"
 #include "Token.h"
@@ -25,11 +26,22 @@ int main(int argc, char* argv[]) {
     Source source(inputFilename);
     ErrorReporter reporter;
 
+    // Scanner
     std::cout << colour::note() << "[Running Scanner]" << colour::reset() << '\n';
     Scanner scanner(source, reporter);
 
     scanner.enableDebugging();
     while (scanner.getToken().kind != Token::END_OF_FILE) {}
+
+    // Recogniser
+    Scanner scanner2(source, reporter);
+    Recogniser recogniser(scanner, reporter);
+
+    recogniser.parseProgram();
+    // TODO: call parseProgram and read from error reporter to check if program copmiled
+    // also implement syntax error in parseProgram, comments and strings in scanner, and parseProgram functions
+
+
 
     return 0;
 }

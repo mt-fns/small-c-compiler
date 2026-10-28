@@ -11,14 +11,20 @@ class Recogniser {
     public:
         Recogniser(Scanner& scanner, ErrorReporter& reporter);
 
+        // PARSE FUNCTIONS
+        void parseProgram();
+        void parseType();
+        void parseIdent();
+        
+        void parseFuncDelcRest();
+        void parseVarDeclRest();
+
     private:
         void match(int tokenExpected);
         void accept();
         
         // TODO
         void syntacticError(std::string message, std::string token);
-
-        // PARSE FUNCTIONS
 
         Scanner& scanner;
         ErrorReporter& reporter;
