@@ -1,0 +1,3 @@
+/Users/nareecooo/Documents/Devsoc/TP26T3/small-c-compiler/built/CMakeFiles/compiler.dir
+/Users/nareecooo/Documents/Devsoc/TP26T3/small-c-compiler/built/CMakeFiles/edit_cache.dir
+/Users/nareecooo/Documents/Devsoc/TP26T3/small-c-compiler/built/CMakeFiles/rebuild_cache.dir
