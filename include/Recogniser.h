@@ -21,14 +21,38 @@ class Recogniser {
         // PARSE FUNCTIONS
         void parseFunDefinition();
 
+        void parseFunSignature();
+
+        void parseCompoundStmt();
+
 
         // PARSE DECLARATIONS
         void parseDeclStmt();
 
         // PARSE TYPES
+        void parseDeclarator();
+
         void parseTyyDecl();
 
         void parseIdentifier();
+
+        // SYNTAX
+
+        void parseTtyidPairList();
+
+        void parseTtyidPair();
+
+        // LITERAL TOKEN
+        void parseIntConst();
+
+        void parseInitList();
+
+        void parseInitDecl();
+
+        void parseInitialiser();
+
+        void parseExpList();
+
 
     
     private:
