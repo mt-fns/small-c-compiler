@@ -30,6 +30,14 @@ class Recogniser {
 
         void parseIdentifier();
 
+        void parseExprList();
+
+        void parseExpression();
+
+        void parseAssignExpr();
+
+        void parseUnary();
+
     
     private:
         // check if tokenExpected == currentToken.kind. if yes, move on to the next token else throw a SyntaxError

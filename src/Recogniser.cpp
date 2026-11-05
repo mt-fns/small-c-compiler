@@ -85,3 +85,47 @@ void Recogniser::parseDeclStmt() {
     // TODO
 }
 
+void Recogniser::parseExprList() {
+    parseExpression();
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseExpression();
+    }
+}
+
+void Recogniser::parseExpression() {
+    parseAssignExpr();
+}
+
+void Recogniser::parseAssignExpr() {
+    parseLogorExpr();
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
+        parseAssignExpr();
+    }
+}
+
+void Recogniser::parseUnary() {
+    switch (currentToken.kind) {
+        case Token::PLUS:
+            match(Token::PLUS);
+            parseUnary();
+            break;
+        
+        case Token::MINUS:
+            match(Token::MINUS);
+            parseUnary();
+            break;
+        
+        case Token::NOT:
+            match(Token::NOT);
+            parseUnary();
+            break;
+        
+        default:
+            parsePrimary();
+            break;
+    }
+}
+
+
