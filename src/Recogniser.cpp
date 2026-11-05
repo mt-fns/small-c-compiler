@@ -129,7 +129,7 @@ void Recogniser::parseCompoundStmt() {
            currentToken.kind == Token::FLOAT) {
         parseDeclStmt();
     }
-    // to do
+    parseStatement();
     match(Token::RCURLY);
 }
 
@@ -137,30 +137,4 @@ void Recogniser::parseDeclStmt() {
     parseTyyDecl();
     parseInitList();
     match(Token::SEMICOLON);
-}
-
-void Recogniser::parseInitList() {
-    parseInitDecl();
-    while (currentToken.kind == Token::COMMA) {
-        match(Token::COMMA);
-        parseInitDecl();
-    }
-}
-
-void Recogniser::parseInitDecl() {
-    parseDeclarator();
-    if (currentToken.kind == Token::EQ) {
-        match(Token::EQ);
-        parseInitialiser();
-    }
-}
-
-void Recogniser::parseInitialiser() {
-    if (currentToken.kind == Token::LCURLY) {
-        match(Token::LCURLY);
-        parseExprList();
-        match(Token::RCURLY);
-    } else {
-        parseExpr();
-    }
 }
