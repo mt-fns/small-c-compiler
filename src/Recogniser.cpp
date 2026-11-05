@@ -81,7 +81,30 @@ void Recogniser::parseFunDefinition() {
     // TODO
 }
 
+
+
 void Recogniser::parseDeclStmt() {
     // TODO
+}
+
+void Recogniser::parseExprList() {
+    parseExpression();
+
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseExpression();
+    }
+}
+
+void Recogniser::parseExpression() {
+    parseAssignExpr();
+}
+
+void Recogniser::parseAssignExpr() {
+    parseLogOrExpr();
+    if (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseAssignExpr();
+    }
 }
 

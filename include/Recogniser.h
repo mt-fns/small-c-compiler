@@ -27,10 +27,25 @@ class Recogniser {
 
         // PARSE TYPES
         void parseTyyDecl();
-
         void parseIdentifier();
 
-    
+        void parseFunSignature();
+        void parseCompoundStmt();
+        void parseTyyidPairList();
+
+        // PARSE EXPRESSIONS
+        void parseExprList();
+        void parseExpression();
+        void parseAssignExpr();
+
+        // PARSE BINARY EXPRESSIONS
+        void parseLogOrExpr();
+        void parseLogAndExpr();
+        void parseEqOpExpr();
+        void parseRelopExpr();
+        void parseAddExpr();
+        void parseMultExpr();
+
     private:
         // check if tokenExpected == currentToken.kind. if yes, move on to the next token else throw a SyntaxError
         void match(int tokenExpected);
