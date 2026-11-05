@@ -3,6 +3,7 @@
 #include "Source.h"
 #include "SyntaxError.h"
 #include "Token.h"
+#include <exception>
 
 Recogniser::Recogniser(Scanner& scanner, ErrorReporter& reporter) :
     scanner{scanner},
@@ -76,13 +77,105 @@ void Recogniser::parseIdentifier() {
     match(Token::ID);
 }
 
+void Recogniser::parseExprList() {
+    parseExpression();
+
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseExpression();
+    }
+}
+
+void Recogniser::parseExpression() {
+    parseAssignExpr();
+}
+
+void Recogniser::parseAssignExpr() {
+    parseLogOrExpr();
+    if (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseAssignExpr();
+    }
+}
+
+
+void Recogniser::parseLogOrExpr() {
+    parseLogAndExpr();
+    while (currentToken.kind == Token::OROR) {
+        match(Token::OROR);
+        parseLogAndExpr();
+    }
+}
 
 void Recogniser::parseFunDefinition() {
     // TODO
 }
 
+void Recogniser::parseLogAndExpr() {
+    parseEqOpExpr();
+
+    while (currentToken.kind == Token::ANDAND) {
+        match(Token::ANDAND);
+        parseEqOpExpr();
+    }
+}
+
+
+void Recogniser::parseEqOpExpr() {
+    parseRelopExpr();
+
+    while (currentToken.kind == Token::EQEQ || currentToken.kind == Token::NOTEQ) {
+        currentToken.kind == Token::EQEQ ? match(Token::EQEQ) : match(Token::NOTEQ);
+        parseRelopExpr();
+    }
+}
+
+void Recogniser::parseRelopExpr() {
+    parseAddExpr();
+    while (currentToken.kind == Token::LT || currentToken.kind == Token::LTEQ || currentToken.kind == Token::GT || currentToken.kind == Token::GTEQ) {
+        match(currentToken.kind);
+        parseAddExpr();
+    }
+}
+
+void Recogniser::parseAddExpr() {
+    parseMultExpr();
+
+    while (currentToken.kind == Token::PLUS || currentToken.kind == Token::MINUS) {
+        match(currentToken.kind);
+        parseMultExpr();
+    }
+}
+
+void Recogniser::parseMultExpr() {
+    parseUnary();
+    while (currentToken.kind == Token::MULT || currentToken.kind == Token::DIV) {
+        match(currentToken.kind);
+        parseUnary();
+    }
+}
 void Recogniser::parseDeclStmt() {
-    // TODO
+    parseTyyDecl();
+    parseInitList();
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseInitList() {
+    parseInitDecl();
+
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseInitDecl();
+    }
+}
+
+void Recogniser::parseInitDecl() {
+    // parseDeclarator();
+
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
+        parseInitInitialiser();
+    }
 }
 
 void Recogniser::parseExprList() {
