@@ -107,6 +107,10 @@ void Recogniser::parseLogOrExpr() {
     }
 }
 
+void Recogniser::parseFunDefinition() {
+    // TODO
+}
+
 void Recogniser::parseLogAndExpr() {
     parseEqOpExpr();
 
@@ -150,3 +154,27 @@ void Recogniser::parseMultExpr() {
         parseUnary();
     }
 }
+void Recogniser::parseDeclStmt() {
+    parseTyyDecl();
+    parseInitList();
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseInitList() {
+    parseInitDecl();
+
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseInitDecl();
+    }
+}
+
+void Recogniser::parseInitDecl() {
+    // parseDeclarator();
+
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
+        parseInitInitialiser();
+    }
+}
+

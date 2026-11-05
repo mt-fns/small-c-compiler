@@ -48,6 +48,13 @@ class Recogniser {
 
         // PARSE UNARY EXPRESSIONS
         void parseUnary();
+        void parseInitList();
+
+
+        // PARSE DECLARATIONS
+        void parseInitDecl();
+        void parseInitInitialiser();
+
 
     private:
         // check if tokenExpected == currentToken.kind. if yes, move on to the next token else throw a SyntaxError
