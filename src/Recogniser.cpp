@@ -14,8 +14,7 @@ void Recogniser::match(int tokenExpected) {
     if (currentToken.kind == tokenExpected) {
         accept();
     } else {
-        // TODO: throw a syntax error here once we have the syntax error class
-        std::cerr << "EROR IN MATCH" << std::endl;
+        syntacticError("michael skibidi", currentToken.spelling);
     }
 }
 
@@ -108,7 +107,59 @@ void Recogniser::parseLogOrExpr() {
 }
 
 void Recogniser::parseFunDefinition() {
-    // TODO
+    parseFunSignature();
+    parseCompoundStmt();
+}
+
+void Recogniser::parseFunSignature() {
+    parseTyyDecl();
+    parseIdentifier();
+    match(Token::LPAREN);
+    if (currentToken.kind == Token::VOID || 
+        currentToken.kind == Token::INT || 
+        currentToken.kind == Token::FLOAT) {
+        parseTtyidPairList();
+    }
+    match(Token::RPAREN);
+}
+
+void Recogniser::parseTtyidPairList() {
+    parseTtyidPair();
+    while (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
+        parseTtyidPair();
+    }
+}
+
+void Recogniser::parseTtyidPair() {
+    parseTyyDecl();
+    parseDeclarator();
+}
+
+void Recogniser::parseDeclarator() {
+    parseIdentifier();
+    if (currentToken.kind == Token::LBRACKET) {
+        match(Token::LBRACKET);
+        if (currentToken.kind == Token::INTLITERAL) {
+            parseIntConst();
+        }
+        match(Token::RBRACKET);
+    }
+}
+
+void Recogniser::parseIntConst() {
+    match(Token::INTLITERAL);
+}
+
+void Recogniser::parseCompoundStmt() {
+    match(Token::LCURLY);
+    while (currentToken.kind == Token::VOID || 
+           currentToken.kind == Token::INT || 
+           currentToken.kind == Token::FLOAT) {
+        parseDeclStmt();
+    }
+    parseStatement();
+    match(Token::RCURLY);
 }
 
 void Recogniser::parseLogAndExpr() {
@@ -174,7 +225,6 @@ void Recogniser::parseInitDecl() {
 
     if (currentToken.kind == Token::EQ) {
         match(Token::EQ);
-        parseInitInitialiser();
+        parseInitialiser();
     }
 }
-
