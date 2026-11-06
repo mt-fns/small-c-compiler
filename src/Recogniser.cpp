@@ -91,8 +91,8 @@ void Recogniser::parseExpression() {
 
 void Recogniser::parseAssignExpr() {
     parseLogOrExpr();
-    if (currentToken.kind == Token::COMMA) {
-        match(Token::COMMA);
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
         parseAssignExpr();
     }
 }
@@ -228,3 +228,43 @@ void Recogniser::parseInitDecl() {
         parseInitialiser();
     }
 }
+
+
+void Recogniser::parseContinueStmt() {
+    match(Token::CONTINUE);
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseReturnStmt() {
+    match(Token::RETURN);
+
+    // if (currentToken.kind == +, -, !, (, identifier, int const))
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseExprStmt() {
+    // if (currentToken.kind == +, -, !, (, identifier, int const))
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+    match(Token::SEMICOLON);
+}
+
