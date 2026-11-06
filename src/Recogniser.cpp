@@ -216,7 +216,13 @@ void Recogniser::parseUnary() {
             break;
         
         default:
-            parsePrimary();
+            if (currentToken.kind == Token::LPAREN ||
+                currentToken.kind == Token::ID ||
+                currentToken.kind == Token::INTLITERAL ||
+                currentToken.kind == Token::FLOATLITERAL ||
+                currentToken.kind == Token::STRINGLITERAL) {
+                    parsePrimary();
+                }
             break;
     }
 }
