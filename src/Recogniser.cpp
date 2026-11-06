@@ -220,9 +220,12 @@ void Recogniser::parseUnary() {
                 currentToken.kind == Token::ID ||
                 currentToken.kind == Token::INTLITERAL ||
                 currentToken.kind == Token::FLOATLITERAL ||
-                currentToken.kind == Token::STRINGLITERAL) {
-                    parsePrimary();
-                }
+                currentToken.kind == Token::STRINGLITERAL) 
+            {
+                parsePrimary();
+            } else {
+                // TODO: Add syntactic error handling
+            }
             break;
     }
 }
