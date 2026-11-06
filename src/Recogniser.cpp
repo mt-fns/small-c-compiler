@@ -91,6 +91,7 @@ void Recogniser::parseExpression() {
 
 void Recogniser::parseAssignExpr() {
     parseLogOrExpr();
+    // TODO: This doesn't seem correct
     if (currentToken.kind == Token::COMMA) {
         match(Token::COMMA);
         parseAssignExpr();
@@ -158,6 +159,7 @@ void Recogniser::parseCompoundStmt() {
            currentToken.kind == Token::FLOAT) {
         parseDeclStmt();
     }
+    // TODO: Is a parseStatement also supposed to loop based on the EBNF?
     parseStatement();
     match(Token::RCURLY);
 }
@@ -206,29 +208,18 @@ void Recogniser::parseIfStmt() {
 void Recogniser::parseForStmt() {
     match(Token::FOR);
     match(Token::LPAREN);
-    if (currentToken.kind == Token::LBRACKET) {
-        match(Token::LBRACKET);
+    if (currentToken.kind != Token::SEMICOLON) {
         parseExpression();
-        match(Token::RBRACKET);
-        match(Token::SEMICOLON);
-
-        if (currentToken.kind == Token::LBRACKET) {
-            match(Token::LBRACKET);
-            parseExpression();
-            match(Token::RBRACKET);
-            match(Token::SEMICOLON);
-
-            if (currentToken.kind == Token::LBRACKET) {
-                match(Token::LBRACKET);
-                parseExpression();
-                match(Token::RBRACKET);
-
-            }
-        }
+    }
+    match(Token::SEMICOLON);
+    if (currentToken.kind != Token::SEMICOLON) {
+        parseExpression();
+    }
+    if (currentToken.kind != Token::RPAREN) {
+        parseExpression();
     }
     match(Token::RPAREN);
     parseStatement();
-
 }
 
 void Recogniser::parseWhileStmt() {
