@@ -208,16 +208,41 @@ void Recogniser::parseIfStmt() {
 void Recogniser::parseForStmt() {
     match(Token::FOR);
     match(Token::LPAREN);
-    if (currentToken.kind != Token::SEMICOLON) {
-        parseExpression();
-    }
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
     match(Token::SEMICOLON);
-    if (currentToken.kind != Token::SEMICOLON) {
-        parseExpression();
-    }
-    if (currentToken.kind != Token::RPAREN) {
-        parseExpression();
-    }
+
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+    match(Token::SEMICOLON);
+
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+        
     match(Token::RPAREN);
     parseStatement();
 }
