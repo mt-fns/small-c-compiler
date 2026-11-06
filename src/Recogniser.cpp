@@ -192,16 +192,19 @@ void Recogniser::parseStatement() {
 }
 
 void Recogniser::parseIfStmt() {
+    match(Token::IF);
     match(Token::LPAREN);
     parseExpression();
     match(Token::RPAREN);
     parseStatement();
     if (currentToken.kind == Token::ELSE) {
+        match(Token::ELSE);
         parseStatement();
     }
 }
 
 void Recogniser::parseForStmt() {
+    match(Token::FOR);
     match(Token::LPAREN);
     if (currentToken.kind == Token::LBRACKET) {
         match(Token::LBRACKET);
@@ -229,6 +232,7 @@ void Recogniser::parseForStmt() {
 }
 
 void Recogniser::parseWhileStmt() {
+    match(Token::WHILE);
     match(Token::LPAREN);
     parseExpression();
     match(Token::RPAREN);
@@ -236,6 +240,7 @@ void Recogniser::parseWhileStmt() {
 }
 
 void Recogniser::parseBreakStmt() {
+    match(Token::BREAK);
     match(Token::SEMICOLON);
 }
 
