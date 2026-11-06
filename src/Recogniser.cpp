@@ -178,3 +178,39 @@ void Recogniser::parseInitDecl() {
     }
 }
 
+
+
+void Recogniser::parseContinueStmt() {
+    match(Token::CONTINUE);
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseReturnStmt() {
+    match(Token::RETURN);
+
+    // if (currentToken.kind == +, -, !, (, identifier, int const))
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LCURLY ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INT) {
+            parseExpression();
+        }
+
+    match(Token::SEMICOLON);
+}
+
+void Recogniser::parseExprStmt() {
+    // if (currentToken.kind == +, -, !, (, identifier, int const))
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LCURLY ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INT) {
+            parseExpression();
+        }
+    match(Token::SEMICOLON);
+}
+
