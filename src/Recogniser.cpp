@@ -163,20 +163,35 @@ void Recogniser::parseCompoundStmt() {
 }
 
 void Recogniser::parseStatement() {
-    parseCompoundStmt();
-    parseIfStmt();
-    parseForStmt();
-    parseWhileStmt();
-    parseBreakStmt();
-    parseContinueStmt();
-    parseReturnStmt();
-    parseExprStmt();
+    switch (currentToken.kind) {
+        case Token::LCURLY:
+            parseCompoundStmt();
+            break;
+        case Token::IF:
+            parseIfStmt();
+            break;
+        case Token::FOR:
+            parseForStmt();
+            break;
+        case Token::WHILE:
+            parseWhileStmt();
+            break;
+        case Token::BREAK:
+            parseBreakStmt();
+            break;
+        case Token::CONTINUE:
+            parseContinueStmt();
+            break;
+        case Token::RETURN:
+            parseReturnStmt();
+            break;
+        default:
+            parseExprStmt();
+            break;
+    }
 }
 
 void Recogniser::parseIfStmt() {
-    if (currentToken.kind != Token::IF) {
-        return;
-    }
     match(Token::LPAREN);
     parseExpression();
     match(Token::RPAREN);
@@ -187,9 +202,6 @@ void Recogniser::parseIfStmt() {
 }
 
 void Recogniser::parseForStmt() {
-    if (currentToken.kind != Token::FOR) {
-        return;
-    }
     match(Token::LPAREN);
     if (currentToken.kind == Token::LBRACKET) {
         match(Token::LBRACKET);
@@ -217,9 +229,6 @@ void Recogniser::parseForStmt() {
 }
 
 void Recogniser::parseWhileStmt() {
-    if (currentToken.kind != Token::WHILE) {
-        return;
-    }
     match(Token::LPAREN);
     parseExpression();
     match(Token::RPAREN);
@@ -227,9 +236,6 @@ void Recogniser::parseWhileStmt() {
 }
 
 void Recogniser::parseBreakStmt() {
-    if (currentToken.kind != Token::BREAK) {
-        return;
-    }
     match(Token::SEMICOLON);
 }
 
