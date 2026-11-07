@@ -14,7 +14,7 @@ void Recogniser::match(int tokenExpected) {
     if (currentToken.kind == tokenExpected) {
         accept();
     } else {
-        syntacticError("michael skibidi", currentToken.spelling);
+        syntacticError("parse error: ", currentToken.spelling);
     }
 }
 
@@ -365,4 +365,38 @@ void Recogniser::parseExprStmt() {
         }
     match(Token::SEMICOLON);
 }
+
+void Recogniser::parseUnary() {
+    switch (currentToken.kind) {
+        case Token::PLUS:
+            match(Token::PLUS);
+            parseUnary();
+            break;
+        
+        case Token::MINUS:
+            match(Token::MINUS);
+            parseUnary();
+            break;
+        
+        case Token::NOT:
+            match(Token::NOT);
+            parseUnary();
+            break;
+        
+        default:
+            if (currentToken.kind == Token::LPAREN ||
+                currentToken.kind == Token::ID ||
+                currentToken.kind == Token::INTLITERAL ||
+                currentToken.kind == Token::FLOATLITERAL ||
+                currentToken.kind == Token::STRINGLITERAL) 
+            {
+                parsePrimary();
+            } else {
+                // TODO: Add syntactic error handling
+                syntacticError("parse error: ", currentToken.spelling);
+            }
+            break;
+    }
+}
+
 
