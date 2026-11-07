@@ -60,10 +60,11 @@ class Recogniser {
 
         // PARSE STATEMENTS
         void parseStatement();
-
         void parseContinueStmt();
         void parseReturnStmt();
-        void parseExprStmt();
+        void parseExprStmt();  
+        
+        void parsePrimary();
 
     private:
         // check if tokenExpected == currentToken.kind. if yes, move on to the next token else throw a SyntaxError

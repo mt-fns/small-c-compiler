@@ -14,7 +14,7 @@ void Recogniser::match(int tokenExpected) {
     if (currentToken.kind == tokenExpected) {
         accept();
     } else {
-        syntacticError("michael skibidi", currentToken.spelling);
+        syntacticError("parse error: ", currentToken.spelling);
     }
 }
 
@@ -268,26 +268,6 @@ void Recogniser::parseExprStmt() {
     match(Token::SEMICOLON);
 }
 
-void Recogniser::parseExprList() {
-    parseExpression();
-    while (currentToken.kind == Token::COMMA) {
-        match(Token::COMMA);
-        parseExpression();
-    }
-}
-
-void Recogniser::parseExpression() {
-    parseAssignExpr();
-}
-
-void Recogniser::parseAssignExpr() {
-    parseLogorExpr();
-    if (currentToken.kind == Token::EQ) {
-        match(Token::EQ);
-        parseAssignExpr();
-    }
-}
-
 void Recogniser::parseUnary() {
     switch (currentToken.kind) {
         case Token::PLUS:
@@ -315,6 +295,7 @@ void Recogniser::parseUnary() {
                 parsePrimary();
             } else {
                 // TODO: Add syntactic error handling
+                syntacticError("parse error: ", currentToken.spelling);
             }
             break;
     }
