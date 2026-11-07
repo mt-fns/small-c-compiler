@@ -60,10 +60,13 @@ class Recogniser {
 
         // PARSE STATEMENTS
         void parseStatement();
+        void parseIfStmt();
+        void parseForStmt();
+        void parseWhileStmt();
+        void parseBreakStmt();
         void parseContinueStmt();
         void parseReturnStmt();
-        void parseExprStmt();  
-        
+        void parseExprStmt();
         void parsePrimary();
 
     private:

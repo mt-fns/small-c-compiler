@@ -91,8 +91,9 @@ void Recogniser::parseExpression() {
 
 void Recogniser::parseAssignExpr() {
     parseLogOrExpr();
-    if (currentToken.kind == Token::EQ) {
-        match(Token::EQ);
+    // TODO: This doesn't seem correct
+    if (currentToken.kind == Token::COMMA) {
+        match(Token::COMMA);
         parseAssignExpr();
     }
 }
@@ -158,8 +159,105 @@ void Recogniser::parseCompoundStmt() {
            currentToken.kind == Token::FLOAT) {
         parseDeclStmt();
     }
+    // TODO: Is a parseStatement also supposed to loop based on the EBNF?
     parseStatement();
     match(Token::RCURLY);
+}
+
+void Recogniser::parseStatement() {
+    switch (currentToken.kind) {
+        case Token::LCURLY:
+            parseCompoundStmt();
+            break;
+        case Token::IF:
+            parseIfStmt();
+            break;
+        case Token::FOR:
+            parseForStmt();
+            break;
+        case Token::WHILE:
+            parseWhileStmt();
+            break;
+        case Token::BREAK:
+            parseBreakStmt();
+            break;
+        case Token::CONTINUE:
+            parseContinueStmt();
+            break;
+        case Token::RETURN:
+            parseReturnStmt();
+            break;
+        default:
+            parseExprStmt();
+            break;
+    }
+}
+
+void Recogniser::parseIfStmt() {
+    match(Token::IF);
+    match(Token::LPAREN);
+    parseExpression();
+    match(Token::RPAREN);
+    parseStatement();
+    if (currentToken.kind == Token::ELSE) {
+        match(Token::ELSE);
+        parseStatement();
+    }
+}
+
+void Recogniser::parseForStmt() {
+    match(Token::FOR);
+    match(Token::LPAREN);
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+    match(Token::SEMICOLON);
+
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+    match(Token::SEMICOLON);
+
+    if (currentToken.kind == Token::PLUS ||
+        currentToken.kind == Token::MINUS ||
+        currentToken.kind == Token::NOT ||
+        currentToken.kind == Token::LPAREN ||
+        currentToken.kind == Token::ID ||
+        currentToken.kind == Token::INTLITERAL ||
+        currentToken.kind == Token::FLOATLITERAL ||
+        currentToken.kind == Token::STRINGLITERAL) {
+            parseExpression();
+        }
+        
+    match(Token::RPAREN);
+    parseStatement();
+}
+
+void Recogniser::parseWhileStmt() {
+    match(Token::WHILE);
+    match(Token::LPAREN);
+    parseExpression();
+    match(Token::RPAREN);
+    parseStatement();
+}
+
+void Recogniser::parseBreakStmt() {
+    match(Token::BREAK);
+    match(Token::SEMICOLON);
 }
 
 void Recogniser::parseLogAndExpr() {
