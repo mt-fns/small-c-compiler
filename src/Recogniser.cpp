@@ -1,4 +1,5 @@
 #include "Recogniser.h"
+q:
 #include "Position.h"
 #include "Source.h"
 #include "SyntaxError.h"
@@ -14,7 +15,7 @@ void Recogniser::match(int tokenExpected) {
     if (currentToken.kind == tokenExpected) {
         accept();
     } else {
-        syntacticError("parse error: ", currentToken.spelling);
+        syntacticError("parse error", currentToken.spelling);
     }
 }
 
@@ -45,6 +46,7 @@ void Recogniser::parseTopLevel() {
     while (currentToken.kind == Token::VOID || currentToken.kind == Token::INT || currentToken.kind == Token::FLOAT) {
         parseTopLevelElem();
     }
+    match(Token::END_OF_FILE);
 }
 
 void Recogniser::parseTopLevelElem() {
@@ -67,7 +69,7 @@ void Recogniser::parseTyyDecl() {
             match(Token::FLOAT);
             break;
         default:
-            syntacticError("Failed Parsing Type:", currentToken.spelling);
+            syntacticError("Failed Parsing Type", currentToken.spelling);
     }
 }
 
@@ -91,9 +93,8 @@ void Recogniser::parseExpression() {
 
 void Recogniser::parseAssignExpr() {
     parseLogOrExpr();
-    // TODO: This doesn't seem correct
-    if (currentToken.kind == Token::COMMA) {
-        match(Token::COMMA);
+    if (currentToken.kind == Token::EQ) {
+        match(Token::EQ);
         parseAssignExpr();
     }
 }
@@ -152,6 +153,14 @@ void Recogniser::parseIntConst() {
     match(Token::INTLITERAL);
 }
 
+void Recogniser::parseFloatConst() {
+    match(Token::FLOATLITERAL);
+}
+
+void Recogniser::parseStrConst() {
+    match(Token::STRINGLITERAL);
+}
+
 void Recogniser::parseCompoundStmt() {
     match(Token::LCURLY);
     while (currentToken.kind == Token::VOID || 
@@ -159,8 +168,9 @@ void Recogniser::parseCompoundStmt() {
            currentToken.kind == Token::FLOAT) {
         parseDeclStmt();
     }
-    // TODO: Is a parseStatement also supposed to loop based on the EBNF?
-    parseStatement();
+    while (currentToken.kind != Token::RCURLY) {
+        parseStatement();
+    }
     match(Token::RCURLY);
 }
 
@@ -319,11 +329,21 @@ void Recogniser::parseInitList() {
 }
 
 void Recogniser::parseInitDecl() {
-    // parseDeclarator();
+    parseDeclarator();
 
     if (currentToken.kind == Token::EQ) {
         match(Token::EQ);
         parseInitialiser();
+    }
+}
+
+void Recogniser::parseInitialiser() {
+    if (currentToken.kind == Token::LCURLY) {
+        match(Token::LCURLY);
+        parseExprList();
+        match(Token::RCURLY);
+    } else {
+        parseExpression();
     }
 }
 
@@ -392,9 +412,69 @@ void Recogniser::parseUnary() {
             {
                 parsePrimary();
             } else {
-                // TODO: Add syntactic error handling
-                syntacticError("parse error: ", currentToken.spelling);
+                syntacticError("parse error", currentToken.spelling);
             }
+            break;
+    }
+}
+
+void Recogniser::parsePrimary() {
+    switch (currentToken.kind) {
+        case Token::LPAREN:
+            parsePrimExpr();
+            break;
+
+        case Token::ID:
+            parsePrimIdent();
+            break;
+
+        case Token::INTLITERAL:
+        case Token::FLOATLITERAL:
+        case Token::STRINGLITERAL:
+            parsePrimLiteral();
+            break;
+
+        default:
+            syntacticError("parse error", currentToken.spelling);
+            break;
+    }
+}
+
+void Recogniser::parsePrimExpr() {
+    match(Token::LPAREN);
+    parseExpression();
+    match(Token::RPAREN);
+}
+
+void Recogniser::parsePrimIdent() {
+    parseIdentifier();
+
+    if (currentToken.kind == Token::LPAREN) {
+        match(Token::LPAREN);
+        if (currentToken.kind != Token::RPAREN) {
+            parseExprList();
+        }
+        match(Token::RPAREN);
+    } else if (currentToken.kind == Token::LBRACKET) {
+        match(Token::LBRACKET);
+        parseExpression();
+        match(Token::RBRACKET);
+    }
+}
+
+void Recogniser::parsePrimLiteral() {
+    switch (currentToken.kind) {
+        case Token::INTLITERAL:
+            parseIntConst();
+            break;
+        case Token::FLOATLITERAL:
+            parseFloatConst();
+            break;
+        case Token::STRINGLITERAL:
+            parseStrConst();
+            break;
+        default:
+            syntacticError("parse error", currentToken.spelling);
             break;
     }
 }

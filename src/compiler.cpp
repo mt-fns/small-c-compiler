@@ -7,6 +7,7 @@
 #include "Recogniser.h"
 #include "Scanner.h"
 #include "Source.h"
+#include "SyntaxError.h"
 #include "Token.h"
 
 static void cmdLineOptions() {
@@ -23,25 +24,33 @@ int main(int argc, char* argv[]) {
     }
     std::string inputFilename = argv[1];
 
-    Source source(inputFilename);
-    ErrorReporter reporter;
-
     // Scanner
     std::cout << colour::note() << "[Running Scanner]" << colour::reset() << '\n';
-    Scanner scanner(source, reporter);
+    Source scannerSource(inputFilename);
+    ErrorReporter scannerReporter;
+    Scanner scanner(scannerSource, scannerReporter);
 
     scanner.enableDebugging();
     while (scanner.getToken().kind != Token::END_OF_FILE) {}
 
     // Recogniser
-    Scanner scanner2(source, reporter);
-    Recogniser recogniser(scanner, reporter);
+    std::cout << '\n' << colour::note() << "[Running Recogniser]" << colour::reset() << '\n';
+    Source source(inputFilename);
+    ErrorReporter reporter;
+    Scanner recogniserScanner(source, reporter);
+    Recogniser recogniser(recogniserScanner, reporter);
 
-    recogniser.parseTopLevel();
-    // TODO: call parseProgram and read from error reporter to check if program copmiled
-    // also implement syntax error in parseProgram, comments and strings in scanner, and parseProgram functions
+    try {
+        recogniser.parseTopLevel();
+    } catch (const SyntaxError&) {
+        // already reported by the recogniser
+    }
 
+    if (reporter.getNumErrors() == 0) {
+        std::cout << "Compilation was successful.\n";
+        return 0;
+    }
 
-
-    return 0;
+    std::cout << "Compilation was unsuccessful.\n";
+    return 1;
 }

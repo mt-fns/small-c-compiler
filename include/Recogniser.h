@@ -36,6 +36,8 @@ class Recogniser {
 
         // LITERAL TOKEN
         void parseIntConst();
+        void parseFloatConst();
+        void parseStrConst();
         
         // PARSE EXPRESSIONS
         void parseExprList();
@@ -67,7 +69,12 @@ class Recogniser {
         void parseContinueStmt();
         void parseReturnStmt();
         void parseExprStmt();
+
+        // PARSE PRIMARY
         void parsePrimary();
+        void parsePrimExpr();
+        void parsePrimIdent();
+        void parsePrimLiteral();
 
     private:
         // check if tokenExpected == currentToken.kind. if yes, move on to the next token else throw a SyntaxError
