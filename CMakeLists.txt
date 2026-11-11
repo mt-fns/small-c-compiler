@@ -11,6 +11,7 @@ add_executable(compiler
     src/compiler.cpp
     src/ErrorReporter.cpp
     src/Position.cpp
+    src/Parser.cpp
     src/Recogniser.cpp
     src/Scanner.cpp
     src/Source.cpp
