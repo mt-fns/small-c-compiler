@@ -1,5 +1,4 @@
 #include "Recogniser.h"
-q:
 #include "Position.h"
 #include "Source.h"
 #include "SyntaxError.h"
