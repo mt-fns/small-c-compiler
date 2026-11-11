@@ -3,6 +3,10 @@
 #include "SyntaxError.h"
 #include "Token.h"
 
+#include "ASTs/DeclList.h"
+#include "ASTs/EmptyDeclList.h"
+#include "ASTs/FuncDecl.h"
+
 Parser::Parser(Scanner& scanner, ErrorReporter& reporter) :
     scanner{scanner},
     reporter{reporter},
@@ -59,19 +63,63 @@ std::unique_ptr<Operator> Parser::acceptOperator() {
 }
 
 std::unique_ptr<ASTList<Decl>> Parser::concatDeclLists(std::unique_ptr<ASTList<Decl>> left, std::unique_ptr<ASTList<Decl>> right) {
-    return nullptr;
+    if (left->isEmpty()) {
+        return right;
+    }
+
+    ASTList<Decl>* cur = left.get();
+    while (!cur->getNext()->isEmpty()) {
+        cur = cur->getNext();
+    }
+
+    cur->setNext(std::move(right));
+    return left;
 }
 
 std::unique_ptr<Program> Parser::parseTopLevel() {
-    return nullptr;
+    Position programPos;
+    start(programPos);
+
+    std::unique_ptr<ASTList<Decl>> dlAST = std::make_unique<EmptyDeclList>(dummyPos);
+
+    while (currentToken.kind == Token::VOID ||
+           currentToken.kind == Token::INT ||
+           currentToken.kind == Token::FLOAT) {
+        dlAST = concatDeclLists(std::move(dlAST), parseTopLevelElem());
+    }
+
+    finish(programPos);
+    match(Token::END_OF_FILE);
+
+    return std::make_unique<Program>(std::move(dlAST), programPos);
 }
 
 std::unique_ptr<ASTList<Decl>> Parser::parseTopLevelElem() {
-    return nullptr;
+    if (peek(2).kind == Token::LPAREN) {
+        std::unique_ptr<Decl> fAST = parseFunDefinition();
+
+        Position funPos = fAST->position;
+
+        return std::make_unique<DeclList>(std::move(fAST), std::make_unique<EmptyDeclList>(dummyPos), funPos);
+    }
+
+    return parseDeclStmt(true);
 }
 
 std::unique_ptr<Decl> Parser::parseFunDefinition() {
-    return nullptr;
+    Position funPos;
+    start(funPos);
+
+    std::unique_ptr<Type> tAST;
+    std::unique_ptr<Ident> iAST;
+    std::unique_ptr<ASTList<Decl>> fplAST;
+    parseFunSignature(tAST, iAST, fplAST);
+
+    std::unique_ptr<Stmt> cAST = parseCompoundStmt();
+
+    finish(funPos);
+
+    return std::make_unique<FuncDecl>(std::move(tAST), std::move(iAST), std::move(fplAST), std::move(cAST), funPos);
 }
 
 void Parser::parseFunSignature(std::unique_ptr<Type>& tAST, std::unique_ptr<Ident>& iAST, std::unique_ptr<ASTList<Decl>>& fplAST) {
